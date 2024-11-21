@@ -5,6 +5,7 @@ import com.vti.blog_app.form.CommentCreateForm;
 import com.vti.blog_app.form.CommentUpdateForm;
 import com.vti.blog_app.mapper.CommentMapper;
 import com.vti.blog_app.repository.CommentRepository;
+import com.vti.blog_app.repository.PostRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,10 +15,18 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class CommentServiceImpl implements CommentService {
     private CommentRepository commentRepository;
+    private PostRepository postRepository;
 
     @Override
     public Page<CommentDto> findAll(Pageable pageable) {
         return commentRepository.findAll(pageable)
+                .map(CommentMapper::map);
+    }
+
+    @Override
+    public Page<CommentDto> findByPostId(Long postId, Pageable pageable) {
+        return commentRepository
+                .findByPostId(postId, pageable)
                 .map(CommentMapper::map);
     }
 
@@ -29,8 +38,14 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDto create(CommentCreateForm form) {
+    public CommentDto create(CommentCreateForm form, Long postId) {
+        var optional = postRepository.findById(postId);
+        if (optional.isEmpty()) {
+            return null;
+        }
+        var post = optional.get();
         var comment = CommentMapper.map(form);
+        comment.setPost(post);
         var savedComment = commentRepository.save(comment);
         return CommentMapper.map(savedComment);
     }
@@ -50,5 +65,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteById(Long id) {
         commentRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteAllByPostId(Long postId) {
+        commentRepository.deleteAllByPostId(postId);
     }
 }

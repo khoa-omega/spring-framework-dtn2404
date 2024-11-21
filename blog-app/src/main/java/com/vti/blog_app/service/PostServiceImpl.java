@@ -3,8 +3,10 @@ package com.vti.blog_app.service;
 import com.vti.blog_app.dto.PostDto;
 import com.vti.blog_app.entity.Post;
 import com.vti.blog_app.form.PostCreateForm;
+import com.vti.blog_app.form.PostFilterForm;
 import com.vti.blog_app.form.PostUpdateForm;
 import com.vti.blog_app.repository.PostRepository;
+import com.vti.blog_app.specification.PostSpecification;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Primary;
@@ -20,8 +22,9 @@ public class PostServiceImpl implements PostService {
     private ModelMapper modelMapper;
 
     @Override
-    public Page<PostDto> findAll(Pageable pageable) {
-        return postRepository.findAll(pageable)
+    public Page<PostDto> findAll(PostFilterForm form, Pageable pageable) {
+        var spec = PostSpecification.buildSpec(form);
+        return postRepository.findAll(spec, pageable)
                 .map(post -> modelMapper.map(post, PostDto.class));
     }
 

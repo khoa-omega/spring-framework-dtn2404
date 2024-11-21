@@ -2,6 +2,7 @@ package com.vti.blog_app.service;
 
 import com.vti.blog_app.dto.PostDto;
 import com.vti.blog_app.form.PostCreateForm;
+import com.vti.blog_app.form.PostFilterForm;
 import com.vti.blog_app.form.PostUpdateForm;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PostServiceImplV2 implements PostService {
     @Override
-    public Page<PostDto> findAll(Pageable pageable) {
+    public Page<PostDto> findAll(PostFilterForm form, Pageable pageable) {
         return null;
     }
 
