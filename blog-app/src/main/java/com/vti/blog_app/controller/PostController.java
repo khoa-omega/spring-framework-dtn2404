@@ -5,12 +5,15 @@ import com.vti.blog_app.form.PostCreateForm;
 import com.vti.blog_app.form.PostFilterForm;
 import com.vti.blog_app.form.PostUpdateForm;
 import com.vti.blog_app.service.PostService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @RestController
 @AllArgsConstructor
 @CrossOrigin("*")
@@ -30,13 +33,13 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/v1/posts")
-    public PostDto create(@RequestBody PostCreateForm form) {
+    public PostDto create(@RequestBody @Valid PostCreateForm form) {
         return postService.create(form);
     }
 
     @PutMapping("/api/v1/posts/{id}")
     public PostDto update(
-            @RequestBody PostUpdateForm form,
+            @RequestBody @Valid PostUpdateForm form,
             @PathVariable("id") Long id
     ) {
         return postService.update(form, id);
